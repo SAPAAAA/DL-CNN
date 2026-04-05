@@ -7,10 +7,14 @@ from torchvision.datasets import ImageFolder
 class VegetablesDataset(ImageFolder):
     """
     Custom Dataset class for the Kaggle Vegetable Image Dataset.
-    Behaves exactly like standard torchvision datasets (CIFAR10, etc.).
     """
-    def __init__(self, root, train=True, transform=None, target_transform=None, download=False, classes=None):
+    def __init__(self, root, split="train", transform=None, target_transform=None, download=False, classes=None):
         self.dataset_root = os.path.join(root, "vegetables")
+        
+        # Validate the split argument
+        valid_splits = ["train", "validation", "test"]
+        if split not in valid_splits:
+            raise ValueError(f"Invalid split '{split}'. Expected one of {valid_splits}.")
         
         # Store the requested classes BEFORE calling super().__init__
         self.target_classes = classes 
@@ -18,9 +22,8 @@ class VegetablesDataset(ImageFolder):
         if download:
             self.download_dataset()
 
-        # Decide which split folder to use based on the `train` flag
-        split_folder = "train" if train else "validation" 
-        target_dir = os.path.join(self.dataset_root, "Vegetable Images", split_folder)
+        # Decide which split folder to use based on the `split` string
+        target_dir = os.path.join(self.dataset_root, "Vegetable Images", split)
 
         if not os.path.exists(target_dir):
             raise RuntimeError(f"Dataset not found at {target_dir}. Please set download=True.")
@@ -57,8 +60,8 @@ class VegetablesDataset(ImageFolder):
 
     def download_dataset(self):
         """Downloads the dataset via kagglehub and moves it to the target root."""
+        # Check if train folder exists to verify download
         if os.path.exists(os.path.join(self.dataset_root, "Vegetable Images", "train")):
-            print("Files already downloaded and verified.")
             return
 
         print("Downloading Vegetable dataset via kagglehub...")
