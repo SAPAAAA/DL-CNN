@@ -46,7 +46,7 @@ class VeggieNet(nn.Module):
         batch1 = self.seq(x)
 
         batch2 = self.pw(x)
-        batch2 = F.adaptive_avg_pool2d(batch2, (batch2.size(2), batch2.size(3)))
+        batch2 = F.adaptive_avg_pool2d(batch2, (batch1.size(2), batch1.size(3)))
         
         x = torch.cat((batch1, batch2), dim=1) # C = 256 + 256
         
