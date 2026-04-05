@@ -34,7 +34,7 @@ class VeggieNet(nn.Module):
         
         self.size = image_size // 8
         
-        self.fc1 = nn.Linear(128 * self.size ** 2, 128)
+        self.global_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.dropout = nn.Dropout(0.5)
         self.fc2 = nn.Linear(128, num_classes)
         
@@ -50,11 +50,11 @@ class VeggieNet(nn.Module):
         batch1 = self.pw(x_pdp)
         batch1 = F.adaptive_avg_pool2d(batch1, (batch2.size(2), batch2.size(3)))
         
-        x = torch.cat((batch1, batch2), dim=1)       
+        x = torch.cat((batch1, batch2), dim=1)
+        x = self.global_pool(x)
         
         x = torch.flatten(x, 1)
         
-        x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
         
