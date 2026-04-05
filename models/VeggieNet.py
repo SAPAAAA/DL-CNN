@@ -17,7 +17,7 @@ class VeggieNet(nn.Module):
         self.dw1 = nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1, groups=64)
         self.pw1 = nn.Conv2d(64, 128, kernel_size=1, padding=0)
         
-        self.dw2 = nn.Conv2d(128, 128, kernel_size=5, stride=2, padding=1, groups=128)
+        self.dw2 = nn.Conv2d(128, 128, kernel_size=5, stride=2, padding=2, groups=128)
         self.pw2 = nn.Conv2d(128, 256, kernel_size=1, padding=0)
         
         self.seq = nn.Sequential(
@@ -39,8 +39,7 @@ class VeggieNet(nn.Module):
         
         self.size = image_size // 8
         
-        self.pdp = PDPNet(in_channels=512, image_size=63, num_classes=5)
-        self.dropout = nn.Dropout(0.5)
+        self.pdp = PDPNet(in_channels=512, image_size=28, num_classes=num_classes)
         
 
     def forward(self, x):
