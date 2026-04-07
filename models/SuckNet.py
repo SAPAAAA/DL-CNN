@@ -32,12 +32,12 @@ class SuckNet(nn.Module):
 			CGDF(in_channels=512, out_channels=512, stride=2)
 		)
         
-        self.pw = nn.Conv2d(512, 512, kernel_size=1)
+        self.pw = nn.Conv2d(1024, 1024, kernel_size=1)
         
         self.head = nn.Sequential(
 			nn.AdaptiveAvgPool2d((1, 1)),
 			nn.Flatten(),
-			nn.Linear(512, num_classes)
+			nn.Linear(1024, num_classes)
 		)
         
     def forward(self, x):
@@ -50,3 +50,5 @@ class SuckNet(nn.Module):
         x = F.relu(self.pw(x))
         
         x = self.head(x)
+        
+        return x
