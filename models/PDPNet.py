@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from models.SE_Attention import SE, Flatten
 
 
-class ModuleNew(nn.Module):
+class CGDF(nn.Module):
     def __init__(self, in_channels, out_channels, stride, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -135,17 +135,17 @@ class PDPNet(nn.Module):
             nn.Conv2d(
                 in_channels=in_channels, out_channels=32, kernel_size=3, stride=2, padding=1
             ),
-            ModuleNew(in_channels=32, out_channels=64, stride=1),
-            ModuleNew(in_channels=64, out_channels=64, stride=1),
-            ModuleNew(
+            CGDF(in_channels=32, out_channels=64, stride=1),
+            CGDF(in_channels=64, out_channels=64, stride=1),
+            CGDF(
                 in_channels=64, out_channels=128, stride=1 if image_size == 32 else 2
             ),
-            ModuleNew(in_channels=128, out_channels=128, stride=1),
-            ModuleNew(in_channels=128, out_channels=256, stride=2),
-            ModuleNew(in_channels=256, out_channels=256, stride=1),
-            ModuleNew(in_channels=256, out_channels=256, stride=2),
-            ModuleNew(in_channels=256, out_channels=512, stride=1),
-            ModuleNew(in_channels=512, out_channels=512, stride=2),
+            CGDF(in_channels=128, out_channels=128, stride=1),
+            CGDF(in_channels=128, out_channels=256, stride=2),
+            CGDF(in_channels=256, out_channels=256, stride=1),
+            CGDF(in_channels=256, out_channels=256, stride=2),
+            CGDF(in_channels=256, out_channels=512, stride=1),
+            CGDF(in_channels=512, out_channels=512, stride=2),
             nn.Conv2d(
                 in_channels=512, out_channels=1024, kernel_size=1, stride=1, padding=0
             ),
