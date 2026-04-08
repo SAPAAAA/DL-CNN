@@ -2,40 +2,38 @@ import torch
 import torch.nn as nn
 
 class LoveNet(nn.Module):
-    def __init__(self, image_size, num_classes=5):
+    def __init__(self, image_size, num_classes=100):
         super(LoveNet, self).__init__()
         
-        self.seq = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1),
+        self.features = nn.Sequential(
+            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.25),
             
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1, groups=64),
-            nn.ReLU(),
-            
-            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.5),
             
-            nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1, groups=128),
+            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1),
             nn.ReLU(),
-            
-            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.5)
         )
-        
+
         size = image_size // 8
         
-        self.head = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(256 * size ** 2, 512),
+            nn.Linear(in_features=128 * size ** 2, out_features=512),
             nn.ReLU(),
-            nn.Dropout(p=0.5),
-            nn.Linear(512, num_classes)
+            nn.Linear(in_features=512, out_features=num_classes)
         )
 
     def forward(self, x):
-        x = self.seq(x)
-        x = self.head(x)
+        x = self.features(x)
+        x = self.classifier(x)
         return x
